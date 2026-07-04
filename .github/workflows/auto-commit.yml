@@ -1,0 +1,25 @@
+name: Auto Green Graph
+
+on:
+  schedule:
+    # Runs at 18:30 UTC which is 00:00 (Midnight) IST
+    - cron: '30 18 * * *'
+  workflow_dispatch:
+
+jobs:
+  update-graph:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Update Date File
+        run: |
+          echo "Solved DSA problems on: $(TZ='Asia/Kolkata' date +'%Y-%m-%d %H:%M:%S IST')" >> dsa-progress.txt
+          git config user.name "Danish Meraj"
+          git config user.email "danishmeraj@users.noreply.github.com"
+          git add dsa-progress.txt
+          git commit -m "Daily DSA Practice: $(TZ='Asia/Kolkata' date +'%Y-%m-%d')"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}   
