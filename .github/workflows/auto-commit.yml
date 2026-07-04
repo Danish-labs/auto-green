@@ -6,20 +6,27 @@ on:
     - cron: '30 18 * * *'
   workflow_dispatch:
 
+# IMPORTANT: This permission block allows the bot to write to the repo
+permissions:
+  contents: write
+
 jobs:
   update-graph:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+        with:
+          # This fixes the "detached HEAD" error by forcing it to grab the main branch
+          ref: main
 
       - name: Update Date File
         run: |
           echo "Solved DSA problems on: $(TZ='Asia/Kolkata' date +'%Y-%m-%d %H:%M:%S IST')" >> dsa-progress.txt
           git config user.name "Danish Meraj"
-          git config user.email "danishmeraj@users.noreply.github.com"
+          git config user.email "Danish-labs@users.noreply.github.com"
           git add dsa-progress.txt
           git commit -m "Daily DSA Practice: $(TZ='Asia/Kolkata' date +'%Y-%m-%d')"
-          git push
+          git push origin main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}   
